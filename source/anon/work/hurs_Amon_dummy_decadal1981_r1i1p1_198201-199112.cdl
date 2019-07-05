@@ -1,0 +1,78 @@
+netcdf hurs_Amon_bcc-csm1-1_decadal1981_r1i1p1_198201-199112 {
+dimensions:
+	time = UNLIMITED ; // (120 currently)
+	lat = 64 ;
+	lon = 128 ;
+	bnds = 2 ;
+variables:
+	double time(time) ;
+		time:bounds = "time_bnds" ;
+		time:units = "days since 1982-01-01" ;
+		time:calendar = "noleap" ;
+		time:axis = "T" ;
+		time:long_name = "time" ;
+		time:standard_name = "time" ;
+	double time_bnds(time, bnds) ;
+	double lat(lat) ;
+		lat:bounds = "lat_bnds" ;
+		lat:units = "degrees_north" ;
+		lat:axis = "Y" ;
+		lat:long_name = "latitude" ;
+		lat:standard_name = "latitude" ;
+	double lat_bnds(lat, bnds) ;
+	double lon(lon) ;
+		lon:bounds = "lon_bnds" ;
+		lon:units = "degrees_east" ;
+		lon:axis = "X" ;
+		lon:long_name = "longitude" ;
+		lon:standard_name = "longitude" ;
+	double lon_bnds(lon, bnds) ;
+	double height ;
+		height:units = "m" ;
+		height:axis = "Z" ;
+		height:positive = "up" ;
+		height:long_name = "height" ;
+		height:standard_name = "height" ;
+	float hurs(time, lat, lon) ;
+		hurs:standard_name = "relative_humidity" ;
+		hurs:long_name = "Near-Surface Relative Humidity" ;
+		hurs:comment = "This is the relative humidity with respect to liquid water for T> 0 C, and with respect to ice for T<0 C." ;
+		hurs:units = "%" ;
+		hurs:original_name = "HURS" ;
+		hurs:cell_methods = "time: mean (interval: 20 mintues)" ;
+		hurs:cell_measures = "area: areacella" ;
+		hurs:history = "2012-08-15T07:31:53Z altered by CMOR: Treated scalar dimension: \'height\'." ;
+		hurs:coordinates = "height" ;
+		hurs:missing_value = 1.e+20f ;
+		hurs:_FillValue = 1.e+20f ;
+		hurs:associated_files = "baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation gridspecFile: gridspec_atmos_fx_bcc-csm1-1_decadal1981_r0i0p0.nc areacella: areacella_fx_bcc-csm1-1_decadal1981_r0i0p0.nc" ;
+
+// global attributes:
+		:institution = "Beijing Climate Center(BCC),China Meteorological Administration,China" ;
+		:institute_id = "BCC" ;
+		:experiment_id = "decadal1981" ;
+		:source = "bcc-csm1-1:atmosphere:  BCC_AGCM2.1 (T42L26); land: BCC_AVIM1.0;ocean: MOM4_L40 (tripolar, 1 lon x (1-1/3) lat, L40);sea ice: SIS (tripolar,1 lon x (1-1/3) lat)" ;
+		:model_id = "dummy" ;
+		:forcing = "Nat Ant GHG SD Oz Sl Vl SS Ds BC OC" ;
+		:parent_experiment_id = "historical" ;
+		:parent_experiment_rip = "r1i1p1" ;
+		:branch_time = 1981. ;
+		:contact = "Dr. Tongwen Wu (twwu@cma.gov.cn)" ;
+		:history = "Output from monthly mean data 2012-08-15T07:31:53Z CMOR rewrote data to comply with CF standards and CMIP5 requirements." ;
+		:comment = "The experiment starts from historical run at 1st Sep. 1981. With ocean initial conditions using the nudging method to observed temperature for the 1st Sep. 1981. The atmospheric and land compositions are prescribed as in the historical run (expt. 3.2) and the RCP4.5 scenario (expt. 4.1) beyond year 2005." ;
+		:initialization_method = 1 ;
+		:physics_version = 1 ;
+		:tracking_id = "37994f26-9f35-4e36-b539-8c9cdfa36487" ;
+		:product = "output" ;
+		:experiment = "10- or 30-year run initialized in year 1981" ;
+		:frequency = "mon" ;
+		:creation_date = "2012-08-15T07:31:54Z" ;
+		:Conventions = "CF-1.4" ;
+		:project_id = "CMIP5" ;
+		:table_id = "Table Amon (11 April 2011) 1cfdc7322cf2f4a32614826fab42c1ab" ;
+		:title = "bcc-csm1-1 model output prepared for CMIP5 10- or 30-year run initialized in year 1981" ;
+		:parent_experiment = "historical" ;
+		:modeling_realm = "atmos" ;
+		:realization = 1 ;
+		:cmor_version = "2.5.6" ;
+}

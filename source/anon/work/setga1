@@ -1,0 +1,8 @@
+history reset by cdo to create anonymous sample file
+source 201707_compliance_checker_evaluation/work/p1.py
+institution CEDA
+institute_id CEDA
+model_id %(model)s
+contact none
+comment this is a sample file with known metadata errors
+title Dummy file with known metadata errors
