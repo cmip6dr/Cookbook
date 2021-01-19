@@ -1,0 +1,15 @@
+netcdf time_ex01 {
+dimensions:
+	time = 3 ;
+variables:
+	double time(time) ;
+		time:standard_name = "time" ;
+		time:units = "days since -0001-01-01" ;
+		time:calendar = "standard" ;
+
+// global attributes:
+	:Conventions = "CF-1.7" ;
+data:
+time = 0, 365, 731 ;
+
+}

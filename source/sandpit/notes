@@ -1,0 +1,18 @@
+
+
+a simple template will be a cdl file, perhaps with directives.
+
+A meta-template will allow building blocks to be combined.
+
+e.g. CMIP: var + hgrid + vgrid. 
+-- challenge of the latter is that the standard seriaization of the information content is not disjoint.
+In particular, cell_methods needs to know and order, and whether to merge operations (e.g. area: mean + time: mean --> area: time: mean);
+
+This latter means that the time processing expressed in "var" must be a richer vocabulary. e.f. "time: mean[weighted: area]" or "[area:] time: mean".
+
+
+
+grid mappings supported by CMOR are listed in cmor_grids.c ... not yet represented in JSON.
+
+
+Irregular grids .... not clear ...

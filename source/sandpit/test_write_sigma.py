@@ -45,8 +45,8 @@ dimension_coordinate_T = cfdm.DimensionCoordinate(
                            bounds=cfdm.Bounds(data=cfdm.Data([[0., 31]])))
 
 dimension_coordinate_Z = cfdm.DimensionCoordinate(
-        properties={'computed_standard_name': 'altitude',
-                    'standard_name': 'atmosphere_hybrid_height_coordinate'},
+        properties={'computed_standard_name': 'pressure',
+                    'standard_name': 'atmosphere_sigma_coordinate'},
         data = cfdm.Data([1.5]),
         bounds=cfdm.Bounds(data=cfdm.Data([[1.0, 2.0]])))
 
@@ -89,31 +89,41 @@ aux_LON  = tas.set_construct(auxiliary_coordinate_lon, axes=[axis_X, axis_Y])
 aux_NAME = tas.set_construct(auxiliary_coordinate_name, axes=[axis_Y])
 
 # Create and set domain ancillary constructs
-domain_ancillary_a = cfdm.DomainAncillary(
-                   properties={'units': 'm'},
+domain_ancillary_sigma = cfdm.DomainAncillary(
+                   properties={'units': '1'},
                    data=cfdm.Data([10.]),
                    bounds=cfdm.Bounds(data=cfdm.Data([[5., 15.]])))
 
-domain_ancillary_b = cfdm.DomainAncillary(
+domain_ancillary_ptop = cfdm.DomainAncillary(
                        properties={'units': '1'},
                        data=cfdm.Data([20.]),
                        bounds=cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
 
-domain_ancillary_orog = cfdm.DomainAncillary(
-                          properties={'standard_name': 'surface_altitude',
+domain_ancillary_ps = cfdm.DomainAncillary(
+                          properties={'standard_name': 'surface_pressure',
                                       'units': 'm'},
                           data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
 
-domain_anc_A    = tas.set_construct(domain_ancillary_a, axes=axis_Z)
-domain_anc_B    = tas.set_construct(domain_ancillary_b, axes=axis_Z)
-domain_anc_OROG = tas.set_construct(domain_ancillary_orog,
+##domain_anc_sigma    = tas.set_construct(domain_ancillary_sigma, axes=axis_Z)
+##
+## folloing results in an error hen writing NetCDF4: 
+## >>>
+## File "/usr/local/lib/python3.5/dist-packages/cfdm/core/constructs.py", line 278, in __getitem__
+##    raise KeyError(key)
+##KeyError: 'dimensioncoordinate1'
+########################
+
+domain_anc_sigma    = dim_Z
+##
+domain_anc_ptop    = tas.set_construct(domain_ancillary_ptop, axes=axis_Z)
+domain_anc_ps = tas.set_construct(domain_ancillary_ps,
                                     axes=[axis_Y, axis_X])
 
 # Create the datum for the coordinate reference constructs
 datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
 
 # Set the netCDF name for a grid mapping variable that might be created from this datum
-datum.nc_set_variable('my_datum_name')
+datum.nc_set_variable('my_name')
 
 # Create the coordinate conversion for the horizontal coordinate
 # reference construct
@@ -125,11 +135,11 @@ coordinate_conversion_h = cfdm.CoordinateConversion(
 # Create the coordinate conversion for the vertical coordinate
 # reference construct
 coordinate_conversion_v = cfdm.CoordinateConversion(
-         parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
-                     'computed_standard_name': 'altitude'},
-         domain_ancillaries={'a': domain_anc_A,
-                             'b': domain_anc_B,
-                             'orog': domain_anc_OROG})
+         parameters={'standard_name': 'atmosphere_sigma_coordinate',
+                     'computed_standard_name': 'pressure'},
+         domain_ancillaries={'sigma': domain_anc_sigma,
+                             'ps': domain_anc_ps,
+                             'ptop': domain_anc_ptop})
 
 # Create the vertical coordinate reference construct
 horizontal_crs = cfdm.CoordinateReference(
@@ -159,5 +169,5 @@ tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
 
 print(tas)
 
-cfdm.write(tas, 'delme.nc', verbose=True)
+##cfdm.write(tas, 'delme.nc', verbose=True)
 cfdm.environment()

@@ -1,0 +1,59 @@
+netcdf delme2 {
+dimensions:
+	sigma = 2 ;
+	time = 2 ;
+	latitude = 3 ;
+	longitude = 3 ;
+variables:
+	double time(time) ;
+		time:standard_name = "time" ;
+		time:units = "days since 2018-12-01" ;
+	double sigma(sigma) ;
+		sigma:computed_standard_name = "altitude" ;
+		sigma:standard_name = "atmosphere_sigma_coordinate" ;
+                sigma:units = "1";
+		sigma:formula_terms = "sigma: sigma ptop: ptop ps: surface_air_pressure" ;
+	double latitude(latitude) ;
+		latitude:standard_name = "latitude" ;
+		latitude:units = "degrees_north" ;
+	double longitude(longitude) ;
+		longitude:standard_name = "longitude" ;
+		longitude:units = "degrees_east" ;
+	double ptop;
+                ptop:standard_name = "air_pressure_at_top_of_atmosphere_model";
+		ptop:units = "hPa" ;
+	double surface_air_pressure(time,latitude, longitude) ;
+		surface_air_pressure:standard_name = "surface_air_pressure" ;
+		surface_air_pressure:units = "hPa" ;
+	double air_temperature(time,sigma, latitude, longitude) ;
+		air_temperature:cell_methods = "latitude: longitude: mean where land (interval: 0.1 degrees) time: maximum" ;
+		air_temperature:coordinates = "time" ;
+		air_temperature:project = "research" ;
+		air_temperature:units = "K" ;
+		air_temperature:standard_name = "air_temperature" ;
+
+// global attributes:
+		:Conventions = "CF-1.7" ;
+		:_NCProperties = "version=2,netcdf=4.6.3,hdf5=1.10.2" ;
+data:
+
+ time = 15.5, 45.5 ;
+
+ sigma = .25, .75 ;
+
+ latitude = 0, 1, 2 ;
+
+ longitude = 0, 1, 2 ;
+
+ ptop = 20 ;
+
+ surface_air_pressure =
+  0, 1, 2, 3, 4, 5, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 16, 17 ;
+
+ air_temperature =
+  0, 1, 2, 3, 4, 5, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 16, 17,
+  18, 19, 20, 21, 22, 23, 24, 25, 26,
+  27, 28, 29, 30, 31, 32, 33, 34, 35 ;
+}

@@ -1,0 +1,26 @@
+{
+    "a": {
+        "data": "<class 'numpy.ndarray'>",
+        "label": "a",
+        "properties": {
+            "standard_name": "atmosphere_hybrid_height_coordinate",
+            "units": "m"
+        }
+    },
+    "b": {
+        "data": "<class 'numpy.ndarray'>",
+        "label": "b",
+        "properties": {
+            "units": "1"
+        }
+    },
+    "orog": {
+        "data": "<class 'numpy.ndarray'>",
+        "label": "orog",
+        "properties": {
+            "long_name": "Orographic Height",
+            "standard_name": "surface_altitude",
+            "units": "m"
+        }
+    }
+}

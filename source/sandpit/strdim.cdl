@@ -1,0 +1,8 @@
+netcdf strdim {
+dimensions:
+   basin = 4 ;
+variables:
+   float mydata(basin) ;
+      mydata:coordinates = "basin" ;
+   char basin(basin) ;
+}

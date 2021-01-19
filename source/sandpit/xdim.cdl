@@ -1,0 +1,15 @@
+netcdf strdim {
+dimensions:
+   x = 4 ;
+variables:
+   float dat(x);
+      dat:coordinates = "z";
+   float z(x);
+      z:axis = "Z";
+   int x(x);
+      x:standard_name = "height";
+      x:units = "m";
+      x:axis = "Z";
+data:
+  x = 1,0,1,0;
+}

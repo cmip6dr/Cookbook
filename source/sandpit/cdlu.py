@@ -218,10 +218,17 @@ class ParseCdl(object):
     else:
       return self._numParse01( val )
 
-  def __call__(self,cdl):
+  def __call__(self,cdl=None,fn=None):
+    assert not all( [cdl==None,fn==None] ), 'Either cdl (string CDL) of fn (file containing CDL) must be specified as argument'
+    assert not all( [cdl!=None,fn!=None] ), 'Only one of cdl (string CDL) or fn (file containing CDL) must be specified as argument: %s' % [cdl==None,fn==None]
+
+    if fn != None:
+      cdl = ''.join( [x for x in open( fn ).readlines() ] )
+    
     m = self.outer.match( cdl )
     if m == None:
        print ("Failed to parse file name .. should be 'netcdf <name> { <body> }'" )
+       self.cdl = cdl
        return None
 
     self._dims = {}
@@ -283,8 +290,26 @@ class ParseCdl(object):
         self._vars[v][n] = self.NT_attr(val1,tt,comment,None)
 
     print (self._vars )
+    self.cc = cc
 
     return Cdlobject( self._dims, self._vars )
+
+
+class Cdl2nc(object):
+  def __init__(self,cdl,fn):
+    self.cdl = cdl
+    nc = netCDF4.Dataset( fn, 'w' )
+    dims = {}
+    vars = {}
+    for d,l in cdl.dimensions.items():
+      dims[d] = nc.createDimension( d,l )
+
+    for v,dd in cdl.variables.items():
+      t = dd['__type__']
+      dstr = tuple( dd['__dims__'].strip()[1:-1].split(',') )
+      vars[v] = nc.createVariable( v, t, dstr )
+
+    nc.close()
 
 dec = re.compile( '^(?P<type>%s)\s+(?P<var>[a-zA-Z0-9_]+)\s*(?P<dims>\(.*\))?\s*;.*' % ('|'.join( cdlTypes.keys() ) ) )
 

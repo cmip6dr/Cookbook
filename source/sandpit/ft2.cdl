@@ -1,0 +1,14 @@
+netcdf front {
+dimensions:
+      fred = 3;
+variables:
+     float fred(fred);
+     float dat(fred, front_type);
+        dat: long_name = "Level of fredality";
+        dat: coordinates = "front_type";
+	dat: cell_methods = "area: time: mean (interval: 1 month) where sea_ice (comment: mask=siconc)";
+        dat: units = "1";
+    :comment = "A dummy file";
+data:
+    fred = 0,1,2;
+}

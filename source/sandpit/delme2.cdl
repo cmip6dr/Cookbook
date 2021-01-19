@@ -1,0 +1,154 @@
+netcdf delme2 {
+dimensions:
+	bounds2 = 2 ;
+	atmosphere_hybrid_height_coordinate = 1 ;
+	time = 1 ;
+	latitude = 10 ;
+	longitude = 9 ;
+variables:
+	double time_bounds(bounds2) ;
+	double time(time) ;
+		time:standard_name = "time" ;
+		time:units = "days since 2018-12-01" ;
+		time:bounds = "time_bounds" ;
+	double bounds(atmosphere_hybrid_height_coordinate, bounds2) ;
+		bounds:formula_terms = "a: bounds_3 b: bounds_4 orog: surface_altitude" ;
+	double atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate) ;
+		atmosphere_hybrid_height_coordinate:computed_standard_name = "altitude" ;
+		atmosphere_hybrid_height_coordinate:standard_name = "atmosphere_hybrid_height_coordinate" ;
+		atmosphere_hybrid_height_coordinate:bounds = "bounds" ;
+		atmosphere_hybrid_height_coordinate:formula_terms = "a: a b: b orog: surface_altitude" ;
+	int bounds_1(latitude, bounds2) ;
+	double latitude(latitude) ;
+		latitude:standard_name = "latitude" ;
+		latitude:units = "degrees_north" ;
+		latitude:bounds = "bounds_1" ;
+	int bounds_2(longitude, bounds2) ;
+	double longitude(longitude) ;
+		longitude:standard_name = "longitude" ;
+		longitude:units = "degrees_east" ;
+		longitude:bounds = "bounds_2" ;
+	double bounds_3(atmosphere_hybrid_height_coordinate, bounds2) ;
+	double a(atmosphere_hybrid_height_coordinate) ;
+		a:units = "m" ;
+	double bounds_4(atmosphere_hybrid_height_coordinate, bounds2) ;
+	double b(atmosphere_hybrid_height_coordinate) ;
+		b:units = "1" ;
+	double surface_altitude(latitude, longitude) ;
+		surface_altitude:standard_name = "surface_altitude" ;
+		surface_altitude:units = "m" ;
+	double cell_measure(longitude, latitude) ;
+		cell_measure:units = "km2" ;
+	double air_temperature_standard_error(latitude, longitude) ;
+		air_temperature_standard_error:standard_name = "air_temperature standard_error" ;
+		air_temperature_standard_error:units = "K" ;
+	double air_temperature(atmosphere_hybrid_height_coordinate, latitude, longitude) ;
+		air_temperature:cell_methods = "latitude: longitude: mean where land (interval: 0.1 degrees) time: maximum" ;
+		air_temperature:coordinates = "time" ;
+		air_temperature:cell_measures = "area: cell_measure" ;
+		air_temperature:project = "research" ;
+		air_temperature:units = "K" ;
+		air_temperature:standard_name = "air_temperature" ;
+		air_temperature:ancillary_variables = "air_temperature_standard_error" ;
+
+// global attributes:
+		:Conventions = "CF-1.7" ;
+		:_NCProperties = "version=2,netcdf=4.6.3,hdf5=1.10.2" ;
+                :floatConstant = 3.142 ; //float .. test
+                :doubleConstant = 3.14159265d;
+                :integerList = 1,2,3,4 ;
+data:
+
+ time_bounds = 0, 31 ;
+
+ time = 15.5 ;
+
+ bounds =
+  1, 2 ;
+
+ atmosphere_hybrid_height_coordinate = 1.5 ;
+
+ bounds_1 =
+  0, 1,
+  2, 3,
+  4, 5,
+  6, 7,
+  8, 9,
+  10, 11,
+  12, 13,
+  14, 15,
+  16, 17,
+  18, 19 ;
+
+ latitude = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ;
+
+ bounds_2 =
+  0, 1,
+  2, 3,
+  4, 5,
+  6, 7,
+  8, 9,
+  10, 11,
+  12, 13,
+  14, 15,
+  16, 17 ;
+
+ longitude = 0, 1, 2, 3, 4, 5, 6, 7, 8 ;
+
+ bounds_3 =
+  5, 15 ;
+
+ a = 10 ;
+
+ bounds_4 =
+  14, 26 ;
+
+ b = 20 ;
+
+ surface_altitude =
+  0, 1, 2, 3, 4, 5, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 16, 17,
+  18, 19, 20, 21, 22, 23, 24, 25, 26,
+  27, 28, 29, 30, 31, 32, 33, 34, 35,
+  36, 37, 38, 39, 40, 41, 42, 43, 44,
+  45, 46, 47, 48, 49, 50, 51, 52, 53,
+  54, 55, 56, 57, 58, 59, 60, 61, 62,
+  63, 64, 65, 66, 67, 68, 69, 70, 71,
+  72, 73, 74, 75, 76, 77, 78, 79, 80,
+  81, 82, 83, 84, 85, 86, 87, 88, 89 ;
+
+ cell_measure =
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+  20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+  40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+  50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+  60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+  70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+  80, 81, 82, 83, 84, 85, 86, 87, 88, 89 ;
+
+ air_temperature_standard_error =
+  0, 1, 2, 3, 4, 5, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 16, 17,
+  18, 19, 20, 21, 22, 23, 24, 25, 26,
+  27, 28, 29, 30, 31, 32, 33, 34, 35,
+  36, 37, 38, 39, 40, 41, 42, 43, 44,
+  45, 46, 47, 48, 49, 50, 51, 52, 53,
+  54, 55, 56, 57, 58, 59, 60, 61, 62,
+  63, 64, 65, 66, 67, 68, 69, 70, 71,
+  72, 73, 74, 75, 76, 77, 78, 79, 80,
+  81, 82, 83, 84, 85, 86, 87, 88, 89 ;
+
+ air_temperature =
+  0, 1, 2, 3, 4, 5, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 16, 17,
+  18, 19, 20, 21, 22, 23, 24, 25, 26,
+  27, 28, 29, 30, 31, 32, 33, 34, 35,
+  36, 37, 38, 39, 40, 41, 42, 43, 44,
+  45, 46, 47, 48, 49, 50, 51, 52, 53,
+  54, 55, 56, 57, 58, 59, 60, 61, 62,
+  63, 64, 65, 66, 67, 68, 69, 70, 71,
+  72, 73, 74, 75, 76, 77, 78, 79, 80,
+  81, 82, 83, 84, 85, 86, 87, 88, 89 ;
+}

@@ -1,0 +1,11 @@
+netcdf strdim {
+dimensions:
+      fred = 3;
+variables:
+     float data(fred);
+     float fred(fred);
+        fred: long_name = "Level of fredality";
+        fred: units = "1";
+data:
+    fred = 0,1,2;
+}
