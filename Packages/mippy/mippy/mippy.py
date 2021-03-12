@@ -1,3 +1,5 @@
+import os, json
+
 class CMIP6_CVS(object):
     def __init__(self,cv_dir):
         self.experiment = json.load( open( '%s/%s' % (cv_dir,'CMIP6_experiment_id.json')))['experiment_id']
