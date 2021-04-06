@@ -42,9 +42,9 @@ class Alpha(object):
         return False
 
     def __hash__(self):
-        if not hasattr( self, '__hashed__' ):
-            self.__hashed__ = ('Alpha',self.name).__hash__()
-        return self.__hashed__ 
+        if not hasattr( self, '__hash_value__' ):
+            self.__hash_value__ = ('Alpha',self.name).__hash__()
+        return self.__hash_value__ 
  
 
  ##  https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
@@ -57,7 +57,7 @@ class Singleton(type):
 
 import json
 
-class Registry(type):
+class Registry_i(type):
     """Metaclass designed to enable creation of classes which which maintain a registry of instances"""
     
     _instances = {}
@@ -67,7 +67,7 @@ class Registry(type):
 
         ## if the hash is not in the dictionary, create a new instance, save in dictionary, and return.
         if h not in cls._instances:
-            this_instance = super(Registry, cls).__call__(*args, **kwargs)
+            this_instance = super(Registry_i, cls).__call__(*args, **kwargs)
             cls._instances[h] = this_instance
             if hasattr( this_instance, '__post_init__' ):
               this_instance.__post_init__()
@@ -80,7 +80,39 @@ class Registry(type):
             if hasattr( this_instance, '__repeat_init__' ):
                this_instance.__repeat_init__()
 
-        this_instance.__hashed__ = h
+        this_instance.__hash_value__ = h
+        return this_instance
+
+
+class Registry(type):
+    """Metaclass designed to enable creation of classes which which maintain a registry of instances"""
+    
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] ).__hash__()
+        print( cls.__name__, args, h )
+
+        ## if the hash is not in the dictionary, create a new instance, save in dictionary, and return.
+        if h not in cls._registry:
+            this_instance = super(Registry, cls).__call__(*args, **kwargs)
+
+        ### a bit hacky ... because dataclass decorator overwrites __hash__ in baseclass
+            this_instance.__hash__ = this_instance.__base_hash__
+
+            cls._registry[h] = this_instance
+            if hasattr( this_instance, '__post_init__' ):
+              this_instance.__post_init__()
+
+        ## if the hash is found, retrieve existing instance.
+        ## there is an optional call to the __repeat_init__ method, of present. This method could be used for
+        ## logging etc, but should not modify the instance.
+        else:
+            this_instance = cls._registry[h]
+            if hasattr( this_instance, '__repeat_init__' ):
+               this_instance.__repeat_init__()
+
+        this_instance.__hash_value__ = h
+
         return this_instance
 
 
@@ -88,7 +120,7 @@ class Registry(type):
 ##class MyClass(BaseClass, metaclass=Singleton):
     ##pass
 
-class Beta(object, metaclass=Registry):
+class Beta(object, metaclass=Registry_i):
     def __init__(self,name: str):
         self.name = name
         print( 'returning new instance for %s' % self.name)
@@ -105,7 +137,7 @@ class Beta(object, metaclass=Registry):
         return False
 
     def __hash__(self):
-        return self.__hashed__ 
+        return self.__hash_value__ 
 
 from dataclasses import dataclass
 
@@ -121,7 +153,7 @@ class InventoryItem:
 
 
 @dataclass
-class Gamma(object, metaclass=Registry):
+class Gamma(object, metaclass=Registry_i):
     name: str
     age: int
 
@@ -132,13 +164,23 @@ class Gamma(object, metaclass=Registry):
         print( 'returning %s from regitsry' % self.name)
 
     def __hash__(self):
-        return self.__hashed__ 
+        return self.__hash_value__ 
+
 
 class BaseDelta(object, metaclass=Registry):
-    def __hash__(self):
-        return self.__hashed__ 
+    _registry = dict()
+    def __base_hash__(self):
+        return self.__hash_value__ 
+    def some_method(self):
+        print( 'SOME METHOD' )
 
-@dataclass
+class x(BaseDelta):
+    def __init__(self):
+        self.__hash_value__ = 33
+
+
+
+@dataclass(unsafe_hash=False)
 class Delta(BaseDelta):
     name: str
     age: int
@@ -162,6 +204,8 @@ def ex01():
     h = Delta( name='Jones', age=10)
     print( '---- Delta ---- ' )
     i = Delta( age=10, name='Jones')
+    ##ee = {h:'a'}
+    ##print( 'i from ee',ee.get( i, '__ not found __') )
 
 
     print( 'a == c',a==c )
