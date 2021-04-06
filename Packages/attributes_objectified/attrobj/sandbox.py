@@ -89,7 +89,8 @@ class Registry(type):
     
     _instances = {}
     def __call__(cls, *args, **kwargs):
-        h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] ).__hash__()
+        h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] )
+        ##h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] ).__hash__()
         print( cls.__name__, args, h )
 
         ## if the hash is not in the dictionary, create a new instance, save in dictionary, and return.
@@ -97,7 +98,7 @@ class Registry(type):
             this_instance = super(Registry, cls).__call__(*args, **kwargs)
 
         ### a bit hacky ... because dataclass decorator overwrites __hash__ in baseclass
-            this_instance.__hash__ = this_instance.__base_hash__
+            ##this_instance.__hash__ = this_instance.__base_hash__
 
             cls._registry[h] = this_instance
             if hasattr( this_instance, '__post_init__' ):
@@ -111,7 +112,10 @@ class Registry(type):
             if hasattr( this_instance, '__repeat_init__' ):
                this_instance.__repeat_init__()
 
-        this_instance.__hash_value__ = h
+        try:
+          this_instance.__hash_value__ = h
+        except:
+            pass
 
         return this_instance
 
@@ -180,7 +184,7 @@ class x(BaseDelta):
 
 
 
-@dataclass(unsafe_hash=False)
+@dataclass(frozen=True)
 class Delta(BaseDelta):
     name: str
     age: int
@@ -204,8 +208,8 @@ def ex01():
     h = Delta( name='Jones', age=10)
     print( '---- Delta ---- ' )
     i = Delta( age=10, name='Jones')
-    ##ee = {h:'a'}
-    ##print( 'i from ee',ee.get( i, '__ not found __') )
+    ee = {h:'a'}
+    print( 'i from ee',ee.get( i, '__ not found __') )
 
 
     print( 'a == c',a==c )
