@@ -45,21 +45,133 @@ class Alpha(object):
         if not hasattr( self, '__hashed__' ):
             self.__hashed__ = ('Alpha',self.name).__hash__()
         return self.__hashed__ 
+ 
+
+ ##  https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+import json
+
+class Registry(type):
+    """Metaclass designed to enable creation of classes which which maintain a registry of instances"""
+    
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] ).__hash__()
+        print( cls.__name__, args, h )
+
+        ## if the hash is not in the dictionary, create a new instance, save in dictionary, and return.
+        if h not in cls._instances:
+            this_instance = super(Registry, cls).__call__(*args, **kwargs)
+            cls._instances[h] = this_instance
+            if hasattr( this_instance, '__post_init__' ):
+              this_instance.__post_init__()
+
+        ## if the hash is found, retrieve existing instance.
+        ## there is an optional call to the __repeat_init__ method, of present. This method could be used for
+        ## logging etc, but should not modify the instance.
+        else:
+            this_instance = cls._instances[h]
+            if hasattr( this_instance, '__repeat_init__' ):
+               this_instance.__repeat_init__()
+
+        this_instance.__hashed__ = h
+        return this_instance
 
 
+#Python3
+##class MyClass(BaseClass, metaclass=Singleton):
+    ##pass
+
+class Beta(object, metaclass=Registry):
+    def __init__(self,name: str):
+        self.name = name
+        print( 'returning new instance for %s' % self.name)
+
+    def __first_time_init__(self):
+        print( 'Running extras: %s ' % self.name)
+
+    def __repeat_init__(self):
+        print( 'returning %s from regitsry' % self.name)
+
+    def __eq__(self,other):
+        if isinstance( other, Alpha) and other.name == self.name:
+            return True
+        return False
+
+    def __hash__(self):
+        return self.__hashed__ 
+
+from dataclasses import dataclass
+
+@dataclass
+class InventoryItem:
+    """Class for keeping track of an item in inventory."""
+    name: str
+    unit_price: float
+    quantity_on_hand: int = 0
+
+    def total_cost(self) -> float:
+        return self.unit_price * self.quantity_on_hand
 
 
+@dataclass
+class Gamma(object, metaclass=Registry):
+    name: str
+    age: int
+
+    def __post_init__(self):
+        print( 'Running extras: %s ' % self.name)
+
+    def __repeat_init__(self):
+        print( 'returning %s from regitsry' % self.name)
+
+    def __hash__(self):
+        return self.__hashed__ 
+
+class BaseDelta(object, metaclass=Registry):
+    def __hash__(self):
+        return self.__hashed__ 
+
+@dataclass
+class Delta(BaseDelta):
+    name: str
+    age: int
+
+    def x__post_init__(self):
+        print( 'At post init %s' % self.name )
+
+    def x__repeat_init__(self):
+        print( 'returning %s from regitsry' % self.name)
 
 def ex01():
-    a = Alpha('Fred')
-    b = Alpha('John')
-    c = Alpha('Fred')
+    a = Beta('Fred')
+    b = Beta('John')
+    c = Beta('Fred')
+
+
+    x = InventoryItem( name='pen', unit_price=5, quantity_on_hand=5 )
+    y = InventoryItem( name='pen', unit_price=5, quantity_on_hand=5 )
+
+    print( '---- Delta ---- ' )
+    h = Delta( name='Jones', age=10)
+    print( '---- Delta ---- ' )
+    i = Delta( age=10, name='Jones')
 
 
     print( 'a == c',a==c )
     print( 'a is c',a is c )
     ee = {a:'a', b:'b' }
     print( 'c from ee',ee.get( c, '__ not found __') )
+    print( 'x == y',x==y )
+    print( 'x is y',x is y )
+    print( 'h == i',h==i )
+    print( 'h is i',h is i )
 
 
 ex01()
