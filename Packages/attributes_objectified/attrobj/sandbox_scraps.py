@@ -89,7 +89,14 @@ class Registry(type):
     
     _instances = {}
     def __call__(cls, *args, **kwargs):
-        h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] )
+        l = list(args)
+        for k,i in kwargs.items():
+            if hasattr(i,'__hash__'):
+                l += [k,i.__hash__()]
+            else:
+                l += [k,i]
+        ##h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] )
+        h = tuple([cls.__name__] + l)
         ##h = tuple([cls.__name__] + list(args) + [json.dumps(kwargs, sort_keys=True)] ).__hash__()
         print( cls.__name__, args, h )
 
@@ -182,8 +189,6 @@ class x(BaseDelta):
     def __init__(self):
         self.__hash_value__ = 33
 
-
-
 @dataclass(frozen=True)
 class Delta(BaseDelta):
     name: str
@@ -193,7 +198,25 @@ class Delta(BaseDelta):
         print( 'At post init %s' % self.name )
 
     def x__repeat_init__(self):
-        print( 'returning %s from regitsry' % self.name)
+       print( 'returning %s from regitsry' % self.name)
+
+@dataclass(frozen=True)
+class FileSection(BaseDelta):
+    name: str = None
+    is_global: bool = False
+    is_dimensions: bool = False
+
+    def __post_init__(self):
+        assert not ( self.is_global and self.is_dimensions )
+        if self.is_global or self.is_dimensions:
+            assert self.name == None
+
+@dataclass(frozen=True)
+class Attribute(BaseDelta):
+    name: str
+    section: FileSection
+    def __post_init__(self):
+        assert not self.section.is_dimensions
 
 def ex01():
     a = Beta('Fred')
