@@ -1,4 +1,4 @@
-import json, numpy, collections, netCDF4
+import json, numpy, collections, netCDF4, time
 
 __doc__ = """
 A set of classes to generate vocabulary items.
@@ -7,6 +7,10 @@ Instances should be identified by their values, so classes are designed to yield
 Instances are hashable, so they can be used as dictionary keys (but hash values may vary between thredds and executables).
 
 E.g. code scans a list of constraints, and finds a constraint on NetCDF file global attribute "source_id" and saves in as "constraints[Attributes(name='source_id',global=True)]; the code then opens a file, and for each global attribute checks to see whether "Attributes(name=key, global=True)" is in constraints, and, if it is, executesthe "apply" method .. or the "format" method: "constraints[Attributes(name=key, global=True)].format( nc )
+
+The _registry_info dictionary contains records of instance creation events. 
+To add information about the calling module (the owner of the event), need to pass a RegistryArg instance:
+    -- RegistryArg( 'Event', 'Loading module %s' % <this module> )
 
 In format.
  if type(other) == netCDF4.Dataset:
@@ -105,8 +109,12 @@ class SelfReference(object): pass
 
 class Registry(type):
     """Metaclass designed to enable creation of classes which which maintain a registry of instances"""
+
+    def __Registry__(self):
+        print( '__Registry__: a method from the sandbox.Registry metaclass' )
     
     def __call__(cls, *args, **kwargs):
+        """Registry.__call__: implement some cacg=hing of instances"""
         ##
         ## maintain a record of all classes 
         ## note that Registry is called with a target class as argument .. it does not have its "own" scope
@@ -155,8 +163,11 @@ class Registry(type):
                 setattr( this_instance, self_ref, this_instance )
 
             cls._registry[h] = this_instance
+
+            if hasattr( cls, '_registry_info' ):
+               cls._registry_info[id(this_instance)] = dict( __creation__=(Registry, '__call__', (cls,args,kwargs), time.ctime()) )
             if hasattr( this_instance, '__post_init__' ):
-              this_instance.__post_init__()
+               this_instance.__post_init__()
 
         ## if the hash is found, retrieve existing instance.
         ## there is an optional call to the __repeat_init__ method, of present. This method could be used for
@@ -308,7 +319,10 @@ class BasicAttribute(BaseDelta):
 
 name = BasicAttribute( name='name', description='Name of a concept' )
 
-td = TestData()
+try:
+  td = TestData()
+except:
+  print( 'Could not recreate td')
 
 ###
 ## breakdown in thought process here ,,,,
